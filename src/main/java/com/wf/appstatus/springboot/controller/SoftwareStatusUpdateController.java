@@ -1,5 +1,7 @@
 package com.wf.appstatus.springboot.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,44 +53,46 @@ public class SoftwareStatusUpdateController {
 //		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
 //		return "softwareUpdateStatus_update";
 //	}
-//	@GetMapping("/softwareUpdateStatus/showFormForUpdateApplicable/{id}")
-//	public String showFormForUpdateApplicable(@PathVariable(value = "id") long id, Model model) {
-//
-//		// get softwareUpdateStatus from the service
-//		SoftwareUpdateStatus softwareUpdateStatus = softwareUpdateStatusService.getSoftwareUpdateStatusById(id);
-//		softwareUpdateStatus.setApplicable("No");
-//		
-//        // Update status and compeltion date to NULL if they are already set for any reason		
-//		softwareUpdateStatus.setUpdateStatus(null);
-//		softwareUpdateStatus.setCompeltedDate(null);
-//		
-//		softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
-//		
-//		// set softwareUpdateStatus as a model attribute to pre-populate the form
-//		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
-//		return "softwareUpdateStatus_update";
-//	}
-//	@GetMapping("/softwareUpdateStatus/showFormForUpdateCompleted/{id}")
-//	public String showFormForUpdateCompleted(@PathVariable(value = "id") long id, Model model) {
-//
-//		// get softwareUpdateStatus from the service
-//		SoftwareUpdateStatus softwareUpdateStatus = softwareUpdateStatusService.getSoftwareUpdateStatusById(id);
-//		softwareUpdateStatus.setUpdateStatus("Compelted");
-//		
-//		LocalDate dateObj = LocalDate.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-//        String completionDate = dateObj.format(formatter);
-//        softwareUpdateStatus.setCompeltedDate(completionDate);
-//		
-//        // Update to YES if it is already set to not applicable for any reason
-//        softwareUpdateStatus.setApplicable("Yes");
-//        
-//		softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
-//		
-//		// set softwareUpdateStatus as a model attribute to pre-populate the form
-//		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
-//		return "softwareUpdateStatus_update";
-//	}
+	@GetMapping("/softwareUpdateStatus/showFormForUpdateApplicable/{id}")
+	public String showFormForUpdateApplicable(@PathVariable(value = "id") long id, Model model) {
+
+		// get softwareUpdateStatus from the service
+		SoftwareUpdateStatus softwareUpdateStatus = softwareUpdateStatusService.getSoftwareUpdateStatusById(id);
+		softwareUpdateStatus.setApplicable("No");
+
+		// Update status and compeltion date to NULL if they are already set for any
+		// reason
+		softwareUpdateStatus.setUpdateStatus(null);
+		softwareUpdateStatus.setCompletedDate(null);
+
+		softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
+
+		// set softwareUpdateStatus as a model attribute to pre-populate the form
+		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
+		return "softwareUpdateStatus_update";
+	}
+
+	@GetMapping("/softwareUpdateStatus/showFormForUpdateCompleted/{id}")
+	public String showFormForUpdateCompleted(@PathVariable(value = "id") long id, Model model) {
+
+		// get softwareUpdateStatus from the service
+		SoftwareUpdateStatus softwareUpdateStatus = softwareUpdateStatusService.getSoftwareUpdateStatusById(id);
+		softwareUpdateStatus.setUpdateStatus("Compelted");
+
+		LocalDate dateObj = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+		String completionDate = dateObj.format(formatter);
+		softwareUpdateStatus.setCompletedDate(completionDate);
+
+		// Update to YES if it is already set to not applicable for any reason
+		softwareUpdateStatus.setApplicable("Yes");
+
+		softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
+
+		// set softwareUpdateStatus as a model attribute to pre-populate the form
+		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
+		return "softwareUpdateStatus_update";
+	}
 //
 //	@GetMapping("/softwareUpdateStatus/deleteSoftwareUpdateStatus/{id}")
 //	public String deleteSoftwareUpdateStatus(@PathVariable(value = "id") long id) {
