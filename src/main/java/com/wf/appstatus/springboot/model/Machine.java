@@ -1,5 +1,7 @@
 package com.wf.appstatus.springboot.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +30,7 @@ public class Machine {
 	private String applicable;
 
 	@Column(name = "install_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private String installDate;
 
 	@Column(name = "comments")

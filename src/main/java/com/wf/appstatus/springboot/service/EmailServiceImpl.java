@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.wf.appstatus.springboot.model.ApplicationGroup;
 import com.wf.appstatus.springboot.model.EmailRecord;
 import com.wf.appstatus.springboot.model.Software;
-import com.wf.appstatus.springboot.model.SoftwareUpdateStatus;
+import com.wf.appstatus.springboot.model.SoftwareUpdateReport;
 import com.wf.appstatus.springboot.repository.EmailRecordRepository;
 
 import jakarta.mail.MessagingException;
@@ -36,7 +36,11 @@ public class EmailServiceImpl implements EmailService {
 	@Autowired
 	private ApplicationGroupService applicationGroupService;
 	@Autowired
-	private SoftwareUpdateStatusService softwareUpdateStatusService;
+	private SoftwareService softwareService;
+//	@Autowired
+//	private SoftwareUpdateStatusService softwareUpdateStatusService;
+	@Autowired
+	private ReportsService reportsService;
 	@Autowired
 	private JavaMailSender javaMailSender;
 
@@ -55,11 +59,25 @@ public class EmailServiceImpl implements EmailService {
 
 		for (ApplicationGroup applicationGroup : applicationGroupService.getAllApplicationGroups()) {
 
-			// save the basic status record
-			SoftwareUpdateStatus softwareUpdateStatus = new SoftwareUpdateStatus();
-			softwareUpdateStatus.setApplicationGroupId(applicationGroup.getId());
-			softwareUpdateStatus.setSoftwareId(software.getId());
-			softwareUpdateStatus = softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
+//			// save the basic status record
+//			SoftwareUpdateStatus softwareUpdateStatus = new SoftwareUpdateStatus();
+//			softwareUpdateStatus.setApplicationGroupId(applicationGroup.getId());
+//			softwareUpdateStatus.setSoftwareId(software.getId());
+//			softwareUpdateStatus = softwareUpdateStatusService.saveSoftwareUpdateStatus(softwareUpdateStatus);
+
+			// save the report record
+			SoftwareUpdateReport newSoftwareUpdateReport = new SoftwareUpdateReport();
+
+			ApplicationGroup group = applicationGroupService.getApplicationGroupById(applicationGroup.getId());
+			newSoftwareUpdateReport.setApplicationGroupName(group.getApplicationGroupName());
+			newSoftwareUpdateReport.setApplicationGroupEmail(group.getApplicationGroupEmail());
+
+			Software soft = softwareService.getSoftwareById(software.getId());
+			newSoftwareUpdateReport.setSoftwareName(soft.getSoftwareName());
+			newSoftwareUpdateReport.setSoftwareDesc(soft.getSoftwareDesc());
+			newSoftwareUpdateReport.setSoftwareVer(soft.getSoftwareVer());
+			newSoftwareUpdateReport.setDueDate(soft.getDueDate());
+			newSoftwareUpdateReport = reportsService.saveSoftwareUpdateReport(newSoftwareUpdateReport);
 
 			// send email
 			MimeMessage msg = javaMailSender.createMimeMessage();
@@ -89,14 +107,18 @@ public class EmailServiceImpl implements EmailService {
 					.append("Click the below link once the software update is complete.");
 			emailContent.append("\n").append("<BR>");
 			emailContent.append("\n").append("<BR>")
-					.append("<a href=\"http://localhost:8080/softwareUpdateStatus/showFormForUpdateCompleted/"
-							+ softwareUpdateStatus.getId() + "\" >Software Update Complete</a>");
+					// .append("<a
+					// href=\"http://localhost:8080/softwareUpdateStatus/showFormForUpdateCompleted/"
+					.append("<a href=\"http://localhost:8080//reportStatus/showFormForUpdateApplicable/"
+							+ newSoftwareUpdateReport.getId() + "\" >Software Update Complete</a>");
 			emailContent.append("\n").append("<BR>");
 			emailContent.append("\n").append("<BR>").append("Click the below link if not applicable.");
 			emailContent.append("\n").append("<BR>");
 			emailContent.append("\n").append("<BR>")
-					.append("<a href=\"http://localhost:8080/softwareUpdateStatus/showFormForUpdateApplicable/"
-							+ softwareUpdateStatus.getId() + "\" >Software Update Not Applicable</a>");
+					// .append("<a
+					// href=\"http://localhost:8080/softwareUpdateStatus/showFormForUpdateApplicable/"
+					.append("<a href=\"http://localhost:8080/reportStatus/showFormForUpdateApplicable/"
+							+ newSoftwareUpdateReport.getId() + "\" >Software Update Not Applicable</a>");
 
 			helper.setText(emailContent.toString(), true);
 			javaMailSender.send(msg);

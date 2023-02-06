@@ -32,7 +32,8 @@ public class EmailController {
 		// sendEmailWithAttachment
 		// emailService.sendEmailWithAttachment();
 
-		return "redirect:/software/";
+		// return "redirect:/software/";
+		return "email_sent_index";
 	}
 
 	@GetMapping("/sendemail/processEmailForm/{id}")
@@ -51,6 +52,8 @@ public class EmailController {
 			e.printStackTrace();
 		}
 
-		return "redirect:/software/";
+		// return "redirect:/software/";
+		return "email_sent_index";
+
 	}
 }

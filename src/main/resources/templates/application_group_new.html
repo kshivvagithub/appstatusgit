@@ -10,33 +10,47 @@
 </head>
 <body>
 	<div class="container my-2">
-		<img width="100%" th:src="@{../images/wellsFargoHeader.jpg}"/>
+		<img width="100%" th:src="@{../images/wellsFargoHeader.jpg}" />
 	</div>
 	<div class="container">
 		<h1>ApplicationGroup Management System</h1>
 		<hr>
 		<h2>Save ApplicationGroup</h2>
 
-		<form action="#" th:action="@{/applicationGroup/saveApplicationGroup}" th:object="${applicationGroup}"
-			method="POST">
-			<input type="text" th:field="*{applicationGroupName}"
-				placeholder="ApplicationGroup Name" class="form-control mb-4 col-4">
+		<form th:action="@{/applicationGroup/saveApplicationGroup}"
+			th:object="${applicationGroup}" method="POST" class="form">
 
-			<input type="text" th:field="*{applicationGroupEmail}"
-				placeholder="ApplicationGroup Email" class="form-control mb-4 col-4">
+			<div class="form-group">
+				<label for="applicationGroupName">Group Name</label> <input
+					type="text" th:field="*{applicationGroupName}"
+					placeholder="ApplicationGroup Name" class="form-control mb-4 col-4">
+				<div class="alert alert-warning mb-4 col-4"
+					th:if="${#fields.hasErrors('applicationGroupName')}"
+					th:errors="*{applicationGroupName}"></div>
+			</div>
 
-			<button type="submit" class="btn btn-info col-2">Save
+			<div class="form-group">
+				<label for="applicationGroupEmail">Email</label> <input type="text"
+					th:field="*{applicationGroupEmail}"
+					placeholder="ApplicationGroup Email"
+					class="form-control mb-4 col-4">
+				<div class="alert alert-warning mb-4 col-4"
+					th:if="${#fields.hasErrors('applicationGroupEmail')}"
+					th:errors="*{applicationGroupEmail}"></div>
+			</div>
+
+			<button type="submit" class="btn btn-info col-3">Save
 				ApplicationGroup</button>
 		</form>
 
 		<hr>
 
 		<a th:href="@{/applicationGroup/}"> Back to ApplicationGroup List</a>
-		<a th:href = "@{/}" > | Home </a>
-		
+		<a th:href="@{/}"> | Home </a>
+
 	</div>
 	<div class="container my-2">
-		<img width="100%" th:src="@{../images/wellsFargoFooter.jpg}"/>
+		<img width="100%" th:src="@{../images/wellsFargoFooter.jpg}" />
 	</div>
 </body>
 </html>

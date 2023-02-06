@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wf.appstatus.springboot.model.SoftwareUpdateReport;
 import com.wf.appstatus.springboot.model.SoftwareUpdateStatus;
+import com.wf.appstatus.springboot.service.ReportsService;
 import com.wf.appstatus.springboot.service.SoftwareUpdateStatusService;
 
 @Controller
@@ -20,6 +22,9 @@ public class SoftwareStatusUpdateController {
 
 	@Autowired
 	private SoftwareUpdateStatusService softwareUpdateStatusService;
+
+	@Autowired
+	private ReportsService reportsService;
 
 	// display list of software
 	@GetMapping("/softwareUpdateStatus/")
@@ -60,7 +65,7 @@ public class SoftwareStatusUpdateController {
 		SoftwareUpdateStatus softwareUpdateStatus = softwareUpdateStatusService.getSoftwareUpdateStatusById(id);
 		softwareUpdateStatus.setApplicable("No");
 
-		// Update status and compeltion date to NULL if they are already set for any
+		// Update status and completion date to NULL if they are already set for any
 		// reason
 		softwareUpdateStatus.setUpdateStatus(null);
 		softwareUpdateStatus.setCompletedDate(null);
@@ -80,9 +85,10 @@ public class SoftwareStatusUpdateController {
 		softwareUpdateStatus.setUpdateStatus("Compelted");
 
 		LocalDate dateObj = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String completionDate = dateObj.format(formatter);
 		softwareUpdateStatus.setCompletedDate(completionDate);
+		// softwareUpdateStatus.setCompletedDate(Date.valueOf(dateObj));
 
 		// Update to YES if it is already set to not applicable for any reason
 		softwareUpdateStatus.setApplicable("Yes");
@@ -92,6 +98,60 @@ public class SoftwareStatusUpdateController {
 		// set softwareUpdateStatus as a model attribute to pre-populate the form
 		model.addAttribute("softwareUpdateStatus", softwareUpdateStatus);
 		return "softwareUpdateStatus_update";
+	}
+
+	@GetMapping("/reportStatus/showFormForUpdateApplicable/{id}")
+	public String showFormForReportUpdateApplicable(@PathVariable(value = "id") long id, Model model) {
+
+		// get softwareUpdateStatus from the service
+		SoftwareUpdateReport softwareUpdateReport = reportsService.getSoftwareUpdateStatusById(id);
+
+		LocalDate doneDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		// String completionDate = doneDate.format(formatter);
+		LocalDate dueDate = LocalDate.parse(softwareUpdateReport.getDueDate(), formatter);
+		if (dueDate.isAfter(doneDate)) {
+			return "softwareUpdateStatus_expired";
+		} else {
+			softwareUpdateReport.setApplicable("No");
+
+			// Update status and completion date to NULL if they are already set for any
+			// reason
+			softwareUpdateReport.setAppStatus(null);
+			softwareUpdateReport.setCompletedDate(null);
+
+			reportsService.saveSoftwareUpdateReport(softwareUpdateReport);
+
+			// set softwareUpdateStatus as a model attribute to pre-populate the form
+			model.addAttribute("softwareUpdateStatus", softwareUpdateReport);
+			return "softwareUpdateStatus_update";
+		}
+	}
+
+	@GetMapping("/reportStatus/showFormForUpdateCompleted/{id}")
+	public String showFormForReportUpdateCompleted(@PathVariable(value = "id") long id, Model model) {
+
+		// get softwareUpdateStatus from the service
+		SoftwareUpdateReport softwareUpdateReport = reportsService.getSoftwareUpdateStatusById(id);
+		softwareUpdateReport.setAppStatus("Compelted");
+
+		LocalDate doneDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String completionDate = doneDate.format(formatter);
+		softwareUpdateReport.setCompletedDate(completionDate);
+		LocalDate dueDate = LocalDate.parse(softwareUpdateReport.getDueDate(), formatter);
+		if (dueDate.isAfter(doneDate)) {
+			return "softwareUpdateStatus_expired";
+		} else {
+			// Update to YES if it is already set to not applicable for any reason
+			softwareUpdateReport.setApplicable("Yes");
+
+			reportsService.saveSoftwareUpdateReport(softwareUpdateReport);
+
+			// set softwareUpdateStatus as a model attribute to pre-populate the form
+			model.addAttribute("softwareUpdateStatus", softwareUpdateReport);
+			return "softwareUpdateStatus_update";
+		}
 	}
 //
 //	@GetMapping("/softwareUpdateStatus/deleteSoftwareUpdateStatus/{id}")
@@ -122,4 +182,5 @@ public class SoftwareStatusUpdateController {
 		model.addAttribute("listSoftwareUpdateStatus", listSoftwareUpdateStatus);
 		return "softwareUpdateStatus_index";
 	}
+
 }

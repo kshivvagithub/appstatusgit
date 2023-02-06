@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "emailrecord")
@@ -16,12 +18,15 @@ public class EmailRecord {
 	private long id;
 
 	@Column(name = "email_to")
+	@Email
 	private String emailTo;
 
 	@Column(name = "email_subject")
+	@NotEmpty
 	private String emailSubject;
 
 	@Column(name = "email_content")
+	@NotEmpty
 	private String emailContent;
 
 	public long getId() {
