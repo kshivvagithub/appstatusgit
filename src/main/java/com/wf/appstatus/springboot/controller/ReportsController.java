@@ -2,7 +2,6 @@ package com.wf.appstatus.springboot.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,24 +34,26 @@ public class ReportsController {
 
 	// display report
 	@GetMapping("/reports/")
-	public String viewSoftwareHomePage(Model model) {
-		return findPaginated(1, "id", "asc", model);
+	public String viewSoftwareHomePage(Model model, @RequestParam("keyword") String keyword) {
+		return findPaginated(1, "id", "asc", model, keyword);
 	}
 
-	// filter report
-	@GetMapping("/reports/filter/")
-	public String viewSoftwareHomePageFilter(Model model, @RequestParam("keyword") String keyword) {
-		return findPaginatedFiltered(1, "id", "asc", keyword, model);
-	}
+//	// filter report
+//	@GetMapping("/reports/filter/")
+//	public String viewSoftwareHomePageFilter(Model model, @RequestParam("keyword") String keyword) {
+//		return findPaginatedFiltered(keyword, "id", "asc", 1, model);
+//		// return findPaginated(1, "id", "asc", model, keyword);
+//	}
 
 	@GetMapping("/reports/page/{pageNo}")
 	public String findPaginated(@PathVariable(value = "pageNo") int pageNo, @RequestParam("sortField") String sortField,
-			@RequestParam("sortDir") String sortDir, Model model) {
+			@RequestParam("sortDir") String sortDir, Model model, @RequestParam("keyword") String keyword) {
 		int pageSize = 5;
 
 		Page<SoftwareUpdateReport> page = reportsService.findPaginated(pageNo, pageSize, sortField, sortDir);
 
-		List<SoftwareUpdateReport> listReports = getAllReportList();
+		// List<SoftwareUpdateReport> listReports = getAllReportList();
+		List<SoftwareUpdateReport> listReports = reportsService.getAllReports(keyword);
 
 //		List<SoftwareUpdateReport> listReports = page.getContent();
 
@@ -65,35 +66,38 @@ public class ReportsController {
 		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
 		model.addAttribute("listReports", listReports);
+		model.addAttribute("keyword", keyword);
+		
 		return "reports_index";
 	}
 
-	@GetMapping("/reports/filter/{pageNo}")
-	public String findPaginatedFiltered(@PathVariable(value = "pageNo") int pageNo,
-			@RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir,
-			@RequestParam("keyword") String keyword, Model model) {
-		int pageSize = 5;
+	@GetMapping("/reports/filter/{keyword}")
+	public String findPaginatedFiltered(@PathVariable(value = "keyword") String keyword, Model model) {
+		// int pageSize = 5;
 
-		Page<SoftwareUpdateReport> page = reportsService.findPaginated(pageNo, pageSize, sortField, sortDir);
+		// Page<SoftwareUpdateReport> page = reportsService.findPaginated(pageNo, pageSize, sortField, sortDir);
 
-		List<SoftwareUpdateReport> listReports = getAllReportList().stream()
-				.filter(k -> k.getSoftwareName().contains(keyword)).collect(Collectors.toList());
+		List<SoftwareUpdateReport> listReports = reportsService.getAllReports(keyword);
+//				getAllReportList().stream()
+//				.filter(k -> k.getSoftwareName().contains(keyword)).collect(Collectors.toList());
 
 //		List<SoftwareUpdateReport> listReports = page.getContent();
 
-		model.addAttribute("currentPage", pageNo);
-		model.addAttribute("totalPages", page.getTotalPages());
-		model.addAttribute("totalItems", page.getTotalElements());
-
-		model.addAttribute("sortField", sortField);
-		model.addAttribute("sortDir", sortDir);
-		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+//		model.addAttribute("currentPage", pageNo);
+//		model.addAttribute("totalPages", page.getTotalPages());
+//		model.addAttribute("totalItems", page.getTotalElements());
+//
+//		model.addAttribute("sortField", sortField);
+//		model.addAttribute("sortDir", sortDir);
+//		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
 		model.addAttribute("listReports", listReports);
+		model.addAttribute("keyword", keyword);
+		
 		return "reports_index";
 	}
 
-	private List<SoftwareUpdateReport> getAllReportList() {
+	public List<SoftwareUpdateReport> getAllReportList() {
 
 		List<SoftwareUpdateReport> listReports = new ArrayList<>();
 

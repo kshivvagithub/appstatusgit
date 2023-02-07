@@ -1,5 +1,7 @@
 package com.wf.appstatus.springboot.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +33,7 @@ public class SoftwareUpdateReport {
 	private String softwareVer;
 
 	@Column(name = "due_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private String dueDate;
 
 	@Column(name = "applicable")
@@ -40,6 +43,7 @@ public class SoftwareUpdateReport {
 	private String appStatus;
 
 	@Column(name = "completed_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private String completedDate;
 
 	public long getId() {

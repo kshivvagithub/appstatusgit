@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wf.appstatus.springboot.model.ApplicationGroup;
 import com.wf.appstatus.springboot.service.ApplicationGroupService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class ApplicationGroupController {
@@ -36,7 +39,14 @@ public class ApplicationGroupController {
 	}
 
 	@PostMapping("/applicationGroup/saveApplicationGroup")
-	public String saveApplicationGroup(@ModelAttribute("applicationGroup") ApplicationGroup applicationGroup) {
+	public String saveApplicationGroup(@ModelAttribute("applicationGroup") @Valid ApplicationGroup applicationGroup, BindingResult result) {
+		if (result.hasErrors()) {
+			if(applicationGroup.getId() > 0) {
+				return "application_group_update";
+			} else {
+			    return "application_group_new";
+			}
+		}
 		// save applicationGroup to database
 		applicationGroupService.saveApplicationGroup(applicationGroup);
 		return "redirect:/applicationGroup/";

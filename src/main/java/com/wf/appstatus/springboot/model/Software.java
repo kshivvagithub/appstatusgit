@@ -1,11 +1,14 @@
 package com.wf.appstatus.springboot.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "software")
@@ -16,15 +19,19 @@ public class Software {
 	private long id;
 
 	@Column(name = "software_name")
+	@NotEmpty
 	private String softwareName;
 
 	@Column(name = "software_desc")
+	@NotEmpty
 	private String softwareDesc;
 
 	@Column(name = "software_ver")
+	@NotEmpty
 	private String softwareVer;
 
 	@Column(name = "due_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private String dueDate;
 
 	public long getId() {

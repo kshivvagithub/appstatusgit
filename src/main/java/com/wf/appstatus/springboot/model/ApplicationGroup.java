@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "applicationGroup")
@@ -16,9 +18,11 @@ public class ApplicationGroup {
 	private long id;
 
 	@Column(name = "application_group_name")
+	@NotEmpty
 	private String applicationGroupName;
 
 	@Column(name = "application_group_email")
+	@Email
 	private String applicationGroupEmail;
 
 	public long getId() {
