@@ -109,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
 			emailContent.append("\n").append("<BR>")
 					// .append("<a
 					// href=\"http://localhost:8080/softwareUpdateStatus/showFormForUpdateCompleted/"
-					.append("<a href=\"http://localhost:8080//reportStatus/showFormForUpdateApplicable/"
+					.append("<a href=\"http://localhost:8080/reportStatus/showFormForUpdateApplicable/"
 							+ newSoftwareUpdateReport.getId() + "\" >Software Update Complete</a>");
 			emailContent.append("\n").append("<BR>");
 			emailContent.append("\n").append("<BR>").append("Click the below link if not applicable.");
